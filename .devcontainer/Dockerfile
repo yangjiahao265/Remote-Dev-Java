@@ -16,9 +16,17 @@ ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
 ARG HTTP_PROXY="none"
+ARG NO_PROXY="*"
 RUN if [ "${HTTP_PROXY}" != "none" ]; then echo "proxy=\"${HTTP_PROXY}\"\n\
-    https-proxy=\"${HTTP_PROXY}\"\n\
-    strict-ssl=false" > /home/vscode/.npmrc; fi
+https-proxy=\"${HTTP_PROXY}\"\n\
+strict-ssl=false" > /home/vscode/.npmrc; fi
+
+ENV http_proxy=${HTTP_PROXY}
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV https_proxy=${HTTP_PROXY}
+ENV HTTPS_PROXY=${HTTP_PROXY}
+ENV no_proxy=${NO_PROXY}
+ENV NO_PROXY=${NO_PROXY}
 
 ARG NPM_MIRROR="none"
 RUN if [ "${NPM_MIRROR}" != "none" ]; then echo "registry=\"${NPM_MIRROR}\"" >> /home/vscode/.npmrc; fi
@@ -30,9 +38,10 @@ ARG APT_MIRROR="none"
 RUN if [ "${APT_MIRROR}" != "none" ]; then sed -i "s,http://deb.debian.org,\"${APT_MIRROR}\",g" /etc/apt/sources.list \
     && sed -i "s,http://security.debian.org,\"${APT_MIRROR}\",g" /etc/apt/sources.list; fi
 
-RUN if [ "${HTTP_PROXY}" != "none" ]; then echo 'Acquire::http::Proxy "\"${HTTP_PROXY}\"";\n\
-    Acquire::https::Proxy "\"${HTTP_PROXY}\"";\n\
-    Acquire::https::Proxy::\"${NO_PROXY}\" DIRECT;' > /etc/apt/apt.conf.d/99proxy.conf; fi
+RUN if [ "${HTTP_PROXY}" != "none" ]; then echo "Acquire::http::Proxy \"${HTTP_PROXY}\";\n\
+Acquire::https::Proxy \"${HTTP_PROXY}\";\n\
+Acquire::https::Proxy::\"${NO_PROXY}\" DIRECT;" > /etc/apt/apt.conf.d/99proxy.conf; fi \
+    && cat /etc/apt/apt.conf.d/99proxy.conf
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -41,3 +50,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 RUN su vscode -c "umask 0002 && . /usr/local/sdkman/bin/sdkman-init.sh && sdk install springboot"
 
 RUN su vscode -c "umask 0002 && . /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 22.0.0.2.r17-grl"
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt upgrade -y \
+    && apt-get -y install zsh-autosuggestions zsh-syntax-highlighting \
+    && echo "source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >> /home/vscode/.zshrc \
+    && echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> /home/vscode/.zshrc

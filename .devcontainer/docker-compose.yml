@@ -3,10 +3,9 @@
 volumes:
   postgres-data:
 
-
 services:
   app:
-    container_name: javadev
+    # container_name: javadev
     build:
       context: .
       dockerfile: Dockerfile
@@ -22,11 +21,7 @@ services:
         GRADLE_VERSION: ""
         NODE_VERSION: "16"
         HTTP_PROXY: ${HTTP_PROXY}
-        HTTPS_PROXY: ${HTTP_PROXY}
         NO_PROXY: ${NO_PROXY}
-        http_proxy: ${HTTP_PROXY}
-        https_proxy: ${HTTP_PROXY}
-        no_proxy: ${NO_PROXY}
         APT_MIRROR: ${APT_MIRROR}
         NPM_MIRROR: ${NPM_MIRROR}
     environment:
@@ -35,12 +30,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_HOSTNAME: postgresdb
-      HTTP_PROXY: ${HTTP_PROXY}
-      HTTPS_PROXY: ${HTTP_PROXY}
-      NO_PROXY: ${NO_PROXY}
-      http_proxy: ${HTTP_PROXY}
-      https_proxy: ${HTTP_PROXY}
-      no_proxy: ${NO_PROXY}
+      # HTTP_PROXY: ${HTTP_PROXY}
+      # HTTPS_PROXY: ${HTTP_PROXY}
+      # NO_PROXY: ${NO_PROXY}
+      # http_proxy: ${HTTP_PROXY}
+      # https_proxy: ${HTTP_PROXY}
+      # no_proxy: ${NO_PROXY}
 
     volumes:
       - ..:/workspace:cached
@@ -57,7 +52,7 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   db:
-    container_name: postgresdb
+    # container_name: postgresdb
     image: postgres:latest
     restart: unless-stopped
     volumes:

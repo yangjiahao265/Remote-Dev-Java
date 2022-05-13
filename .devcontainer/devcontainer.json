@@ -1,18 +1,19 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.231.6/containers/java-postgres
 {
-	"name": "Java & PostgreSQL",
+	"name": "Java Remote Develepment Container",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspace",
 	
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"java.home": "/docker-java-home",
-		"http.proxy": "http://192.168.3.144:7890",
 		"http.proxyStrictSSL": false,
 		"remote.downloadExtensionsLocally": true,
-		"remote.containers.copyGitConfig": true
+		"remote.containers.copyGitConfig": true,
+		"terminal.integrated.defaultProfile.linux": "zsh",
+		"remote.autoForwardPorts": true,
+		"java.jdt.ls.java.home": "/docker-java-home"
 	},
 	
 	// Add the IDs of extensions you want installed when the container is created.
